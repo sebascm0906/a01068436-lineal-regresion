@@ -44,6 +44,13 @@ Con un CSV de nuevas observaciones (mismas columnas de entrada que el entrenamie
 python src/cli.py predict --csv data/toy_data.csv --take-first 5
 ```
 
+o también con 
+```bash
+python src/cli.py predict --model model.json --features 120,3
+```
+
+cuando se quiere hacer con 2 variables
+
 O pasar características “en línea”:
 
 ```bash

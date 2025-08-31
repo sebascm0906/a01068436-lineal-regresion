@@ -21,18 +21,19 @@ def train_cmd(args):
     # Métricas
     yhat_tr = model.predict(X_tr)
     yhat_te = model.predict(X_te)
+
     mse_tr = model.mse(y_tr, yhat_tr)
     mae_tr = model.mae(y_tr, yhat_tr)
-    r2_tr = model.r2(y_tr, yhat_tr)
+    r2_tr  = model.r2(y_tr, yhat_tr)
 
     mse_te = model.mse(y_te, yhat_te)
     mae_te = model.mae(y_te, yhat_te)
-    r2_te = model.r2(y_te, yhat_te)
+    r2_te  = model.r2(y_te, yhat_te)
 
     print("=== Entrenamiento ===")
-    print(f"MSE: {mse_tr:.4f} | MAE: {mae_tr:.4f} | R2: {r2_tr:.4f}")
+    print(f"MSE: {mse_tr:.4f} | MAE: {mae_tr:.4f} | R²: {r2_tr:.4f}")
     print("=== Prueba ===")
-    print(f"MSE: {mse_te:.4f} | MAE: {mae_te:.4f} | R2: {r2_te:.4f}")
+    print(f"MSE: {mse_te:.4f} | MAE: {mae_te:.4f} | R²: {r2_te:.4f}")
     print()
 
     # Muestra algunas predicciones vs reales
