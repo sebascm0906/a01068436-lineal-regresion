@@ -47,7 +47,7 @@ def train_cmd(args):
     write_predictions_csv(pred_path, y_te, yhat_te)
     print(f"\nSe guardó {pred_path} en el directorio actual.")
 
-    # Guardar modelo
+    # Guardar modelo + métricas en JSON
     config = {
         "csv": args.csv,
         "target": args.target,
@@ -58,8 +58,27 @@ def train_cmd(args):
         "fit_intercept": not args.no_intercept,
         "seed": args.seed,
     }
-    save_model("model.json", model, scaler, feature_names, config)
-    print("Modelo guardado en 'model.json'.")
+    results = {
+        "train": {"MSE": mse_tr, "MAE": mae_tr, "R2": r2_tr},
+        "test":  {"MSE": mse_te, "MAE": mae_te, "R2": r2_te},
+    }
+    payload = {
+        "model": {
+            "w": model.w,
+            "b": model.b,
+            "fit_intercept": model.fit_intercept,
+            "alpha": model.alpha,
+            "iters": model.iters,
+        },
+        "scaler": scaler.to_dict() if scaler is not None else None,
+        "feature_names": feature_names,
+        "config": config,
+        "results": results
+    }
+    with open("model.json", "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    print("Modelo y métricas guardados en 'model.json'.")
 
 def parse_features(s: str) -> List[float]:
     parts = [p for p in s.split(",") if p.strip()]
