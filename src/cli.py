@@ -15,7 +15,12 @@ def train_cmd(args):
         X_tr = scaler.fit_transform(X_tr)
         X_te = scaler.transform(X_te)
 
-    model = LinearRegressionGD(alpha=args.alpha, iters=args.iters, fit_intercept=not args.no_intercept)
+    model = LinearRegressionGD(
+        alpha=args.alpha,
+        iters=args.iters,
+        fit_intercept=not args.no_intercept,
+        l2=args.ridge
+    )
     model.fit(X_tr, y_tr)
 
     # Métricas
@@ -56,6 +61,7 @@ def train_cmd(args):
         "test_size": args.test_size,
         "normalized": not args.no_normalize,
         "fit_intercept": not args.no_intercept,
+        "ridge": args.ridge,
         "seed": args.seed,
     }
     results = {
@@ -69,6 +75,8 @@ def train_cmd(args):
             "fit_intercept": model.fit_intercept,
             "alpha": model.alpha,
             "iters": model.iters,
+            "l2": model.l2,
+            "history": model.history
         },
         "scaler": scaler.to_dict() if scaler is not None else None,
         "feature_names": feature_names,
@@ -129,7 +137,7 @@ def predict_cmd(args):
         raise SystemExit("Usa --csv o --features.")
 
 def build_parser():
-    p = argparse.ArgumentParser(description="Regresión Lineal desde cero (GD)")
+    p = argparse.ArgumentParser(description="Regresión Lineal desde cero (GD + Ridge opcional)")
     sp = p.add_subparsers(dest="cmd", required=True)
 
     pt = sp.add_parser("train", help="Entrenar y evaluar el modelo")
@@ -140,6 +148,7 @@ def build_parser():
     pt.add_argument("--test-size", type=float, default=0.2, help="Proporción para conjunto de prueba")
     pt.add_argument("--no-intercept", action="store_true", help="Desactiva intercepto")
     pt.add_argument("--no-normalize", action="store_true", help="Desactiva normalización")
+    pt.add_argument("--ridge", type=float, default=0.0, help="Coeficiente L2 (0 = sin regularización)")
     pt.add_argument("--seed", type=int, default=42, help="Semilla para reproducibilidad")
     pt.set_defaults(func=train_cmd)
 
